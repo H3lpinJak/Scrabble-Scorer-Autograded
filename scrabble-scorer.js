@@ -3,56 +3,102 @@
 const input = require("readline-sync");
 
 const oldPointStructure = {
-  1: ['A', 'E', 'I', 'O', 'U', 'L', 'N', 'R', 'S', 'T'],
-  2: ['D', 'G'],
-  3: ['B', 'C', 'M', 'P'],
-  4: ['F', 'H', 'V', 'W', 'Y'],
-  5: ['K'],
-  8: ['J', 'X'],
-  10: ['Q', 'Z']
+   1: ['A', 'E', 'I', 'O', 'U', 'L', 'N', 'R', 'S', 'T'],
+   2: ['D', 'G'],
+   3: ['B', 'C', 'M', 'P'],
+   4: ['F', 'H', 'V', 'W', 'Y'],
+   5: ['K'],
+   8: ['J', 'X'],
+   10: ['Q', 'Z']
 };
 
 function oldScrabbleScorer(word) {
-	word = word.toUpperCase();
-	let letterPoints = "";
- 
-	for (let i = 0; i < word.length; i++) {
- 
-	  for (const pointValue in oldPointStructure) {
- 
-		 if (oldPointStructure[pointValue].includes(word[i])) {
-			letterPoints += `Points for '${word[i]}': ${pointValue}\n`
-		 }
- 
-	  }
-	}
-	return letterPoints;
- }
+   word = word.toUpperCase();
+   let letterPoints = "";
+
+   for (let i = 0; i < word.length; i++) {
+
+      for (const pointValue in oldPointStructure) {
+
+         if (oldPointStructure[pointValue].includes(word[i])) {
+            letterPoints += `Points for '${word[i]}': ${pointValue}\n`
+         }
+
+      }
+   }
+   return letterPoints;
+}
 
 // your job is to finish writing these functions and variables that we've named //
 // don't change the names or your program won't work as expected. //
 
 function initialPrompt() {
-   console.log("Let's play some scrabble! Enter a word:");
+   console.log(`\nLet's play some scrabble!\n`)
+   let word = input.question('Enter a word: ')
+   return word;
 };
 
-let simpleScorer;
+function simpleScorer(word) {
+   let score = 0;
+   for (let letter in word.toUpperCase()) {
+      score += 1
+   }
+   return score;
+}
 
-let vowelBonusScorer;
+function vowelBonusScorer(word) {
+   let score = 0;
+   let vowel = 'AEIOU'
+   for (let letter in word.toUpperCase()) {
+      if (vowel.includes(letter)) {
+         score += 3;
+      } else
+         score += 1;
+   }
+   return score;
+}
 
 let scrabbleScorer;
 
-const scoringAlgorithms = [];
+const scoringAlgorithms = [
+   {
+      name: 'Simple Score',
+      description: 'Each letter is 1 point',
+      scoringFunction: simpleScorer
+   },
+   {
+      name: 'Bonus Vowels',
+      description: 'Vowels are 3 points, consonants are 1 point',
+      scoringFunction: vowelBonusScorer
+   },
+   {
+      name: 'Scrabble',
+      description: 'The traditional scoring algorithm.',
+      scoringFunction: oldScrabbleScorer
+   },
+];
 
-function scorerPrompt() {}
+function scorerPrompt(word) {
+   console.log("Which algorithm would you like to use?")
+   for (let i = 0; i < scoringAlgorithms.length; i++) {
+      console.log(`${i} - ${scoringAlgorithms[i].name} : ${scoringAlgorithms[i].description}`)
+   }
+   let choose = input.question('Select what number you would like to score with: ')
+}
 
-function transform() {};
+function transform() { };
 
 let newPointStructure;
 
 function runProgram() {
-   initialPrompt();
-   
+   let ask = initialPrompt();
+   console.log(simpleScorer(ask))
+   console.log(vowelBonusScorer(ask))
+
+   let choiceAlgorithm = scorerPrompt();
+   console.log(`Use Algorithm: ${scoringAlgorithms[choiceAlgorithm]}`)
+   console.log(`Scoring ${word}: ${scoringAlgorithms[choiceAlgorithm]}`)
+
 }
 
 // Don't write any code below this line //
@@ -66,6 +112,6 @@ module.exports = {
    scrabbleScorer: scrabbleScorer,
    scoringAlgorithms: scoringAlgorithms,
    newPointStructure: newPointStructure,
-	runProgram: runProgram,
-	scorerPrompt: scorerPrompt
+   runProgram: runProgram,
+   scorerPrompt: scorerPrompt
 };
