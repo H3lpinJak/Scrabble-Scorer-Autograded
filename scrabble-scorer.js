@@ -58,7 +58,17 @@ function vowelBonusScorer(word) {
    return score;
 }
 
-let scrabbleScorer;
+let scrabbleScorer = function(word) {
+   word = word.toUpperCase();
+   let score = 0;
+   for (let i = 0; i < word.length; i++) {
+      let letter = word[i];
+      //if () {
+
+      //}
+   }
+   return score;
+};
 
 const scoringAlgorithms = [
    {
@@ -84,20 +94,31 @@ function scorerPrompt(word) {
       console.log(`${i} - ${scoringAlgorithms[i].name} : ${scoringAlgorithms[i].description}`)
    }
    let choose = input.question('Select what number you would like to score with: ')
+   return choose;
 }
 
-function transform() { };
+function transform(oldScrabbleScorer) {
+   let newPointStructure = {};
+   for (let pointValue in oldPointStructure) {
+      let letters = oldPointStructure[pointValue];
+      for (let i = 0; i < letters.length; i++) {
+         let letter = letters[i].toLowerCase();
+         newPointStructure[letter] = Number[pointValue]
+      }
+   }
+   return newPointStructure;
+};
 
-let newPointStructure;
+let newPointStructure = transform(oldPointStructure);
 
 function runProgram() {
-   let ask = initialPrompt();
-   console.log(simpleScorer(ask))
-   console.log(vowelBonusScorer(ask))
+   let word = initialPrompt();
+   let chooseAlgorithm = scorerPrompt(word);
+   let selectedAlgorithms = scoringAlgorithms[chooseAlgorithm];
+   console.log(`Use Algorithm: ${selectedAlgorithms.name}`)
 
-   let choiceAlgorithm = scorerPrompt();
-   console.log(`Use Algorithm: ${scoringAlgorithms[choiceAlgorithm]}`)
-   console.log(`Scoring ${word}: ${scoringAlgorithms[choiceAlgorithm]}`)
+   let score = selectedAlgorithms.scoringFunction(word);
+   console.log(`Scoring the word: ~ ${word} ~\n${selectedAlgorithms.name}\n${score}`);
 
 }
 
