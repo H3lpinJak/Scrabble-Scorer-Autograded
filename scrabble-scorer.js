@@ -48,43 +48,54 @@ function simpleScorer(word) {
 
 function vowelBonusScorer(word) {
    let score = 0;
-   let vowel = 'AEIOU'
-   for (let letter in word.toUpperCase()) {
+   let vowel = 'aeiou'
+
+   for (let i = 0; i < word.length; i++) {
+      let letter = word[i].toLowerCase();
       if (vowel.includes(letter)) {
          score += 3;
-      } else
+      } else {
          score += 1;
+      }
    }
    return score;
 }
-
-let scrabbleScorer = function(word) {
-   word = word.toUpperCase();
+let scrabbleScorer = function (word) {
+   word = word.toLowerCase();
    let score = 0;
+   let newPointScorer = {
+      'a': 1, 'b': 3, 'c': 3, 'd': 2, 'e': 1, 'f': 4, 'g': 2, 'h': 4, 'i': 1,
+      'j': 8, 'k': 5, 'l': 1, 'm': 3, 'n': 1, 'o': 1, 'p': 3, 'q': 10, 'r': 1,
+      's': 1, 't': 1, 'u': 1, 'v': 4, 'w': 4, 'x': 8, 'y': 4, 'z': 10
+   };
+
    for (let i = 0; i < word.length; i++) {
       let letter = word[i];
-      //if () {
-
-      //}
+      if (newPointScorer.hasOwnProperty(letter)) {
+         score += newPointScorer[letter];
+      }
    }
    return score;
-};
 
+
+};
+// Define the point values for each letter
+// Loop through each letter in the word and accumulate the score
 const scoringAlgorithms = [
    {
       name: 'Simple Score',
       description: 'Each letter is 1 point',
-      scoringFunction: simpleScorer
+      scorerFunction: simpleScorer
    },
    {
       name: 'Bonus Vowels',
       description: 'Vowels are 3 points, consonants are 1 point',
-      scoringFunction: vowelBonusScorer
+      scorerFunction: vowelBonusScorer
    },
    {
       name: 'Scrabble',
       description: 'The traditional scoring algorithm.',
-      scoringFunction: oldScrabbleScorer
+      scorerFunction: scrabbleScorer
    },
 ];
 
@@ -94,31 +105,34 @@ function scorerPrompt(word) {
       console.log(`${i} - ${scoringAlgorithms[i].name} : ${scoringAlgorithms[i].description}`)
    }
    let choose = input.question('Select what number you would like to score with: ')
-   return choose;
+   return scoringAlgorithms[Number(choose)];
 }
 
-function transform(oldScrabbleScorer) {
+function transform(oldPointStructure) {
    let newPointStructure = {};
    for (let pointValue in oldPointStructure) {
       let letters = oldPointStructure[pointValue];
       for (let i = 0; i < letters.length; i++) {
          let letter = letters[i].toLowerCase();
-         newPointStructure[letter] = Number[pointValue]
+         newPointStructure[letter] = Number(pointValue)
+         //console.log(letter, Number(pointValue))
       }
    }
    return newPointStructure;
 };
+//console.log(transform(oldPointStructure))
+let newPointStructure = transform(oldPointStructure)
 
-let newPointStructure = transform(oldPointStructure);
+
+
 
 function runProgram() {
    let word = initialPrompt();
    let chooseAlgorithm = scorerPrompt(word);
-   let selectedAlgorithms = scoringAlgorithms[chooseAlgorithm];
-   console.log(`Use Algorithm: ${selectedAlgorithms.name}`)
+   console.log(`Use Algorithm: ${chooseAlgorithm.name}`)
 
-   let score = selectedAlgorithms.scoringFunction(word);
-   console.log(`Scoring the word: ~ ${word} ~\n${selectedAlgorithms.name}\n${score}`);
+   let score = chooseAlgorithm.scorerFunction(word);
+   console.log(`Scoring the word: ~ ${word} ~\n${chooseAlgorithm.name}\n${score}`);
 
 }
 
